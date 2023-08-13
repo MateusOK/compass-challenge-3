@@ -36,6 +36,7 @@ public class History {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
+    @JsonBackReference
     private Post post;
 
 }
