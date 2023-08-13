@@ -17,6 +17,12 @@ import java.time.LocalDateTime;
 @Table(name = "history")
 public class History {
 
+    public History(LocalDateTime date, String status, Post post) {
+        this.date = date;
+        this.status = status;
+        this.post = post;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "history_id")
