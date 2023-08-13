@@ -56,4 +56,30 @@ public class PostServiceImpl implements PostService {
             postRepository.save(post);
         }
     }
+
+    @Override
+    public void disablePost(Long postId) {
+        Optional<Post> postOptional = postRepository.findById(postId);
+
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+
+            List<History> historyList = post.getHistory();
+            if (historyList.isEmpty()) {
+                throw new IllegalStateException("Post history is empty.");
+            }
+
+            History latestHistory = historyList.get(historyList.size() - 1);
+            if (latestHistory.getStatus().equals(HistoryStatus.ENABLED.name())) {
+                post.getHistory().add(new History(LocalDateTime.now(), HistoryStatus.DISABLED.name(), post));
+                postRepository.save(post);
+            } else if (latestHistory.getStatus().equals(HistoryStatus.DISABLED.name())) {
+                throw new RuntimeException("Post is already disabled");
+            } else {
+                throw new IllegalStateException("Latest history is not in the ENABLED state.");
+            }
+        } else {
+            throw new RuntimeException("Post not found.");
+        }
+    }
 }

@@ -13,4 +13,6 @@ public interface PostService {
     void failPost(Long postId);
 
     void enablePost(Long postId);
+
+    void disablePost(Long postId);
 }
