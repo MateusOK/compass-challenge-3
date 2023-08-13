@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,5 +37,13 @@ public class PostServiceImpl implements PostService {
             throw new RuntimeException("No posts were found");
         }
         return postsDto;
+    }
+
+    @Override
+    public void failPost(Long postId) {
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new RuntimeException("Post not found: " + postId));
+        post.getHistory().add(new History(LocalDateTime.now(), HistoryStatus.FAILED.name(), post));
+        postRepository.save(post);
     }
 }

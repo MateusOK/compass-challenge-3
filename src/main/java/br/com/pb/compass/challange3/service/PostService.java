@@ -10,4 +10,5 @@ public interface PostService {
 
     List<PostResponseDto> getAllPosts();
 
+    void failPost(Long postId);
 }
