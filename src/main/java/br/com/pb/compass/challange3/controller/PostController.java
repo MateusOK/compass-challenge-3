@@ -5,6 +5,7 @@ import br.com.pb.compass.challange3.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,4 +34,9 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> disablePost(@PathVariable Long postId){
+        jmsTemplate.convertAndSend("disabled.queue", postId);
+        return ResponseEntity.noContent().build();
+    }
 }
