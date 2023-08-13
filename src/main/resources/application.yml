@@ -9,3 +9,8 @@ spring:
     username: sa
     password:
     driverClassName: org.h2.Driver
+
+  artemis:
+    mode: embedded
+    embedded:
+      queues: created.queue,post.find.queue,post.ok.queue,failed.queue,comments.find.queue,comments.ok.queue
