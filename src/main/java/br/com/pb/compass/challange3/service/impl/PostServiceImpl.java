@@ -46,4 +46,14 @@ public class PostServiceImpl implements PostService {
         post.getHistory().add(new History(LocalDateTime.now(), HistoryStatus.FAILED.name(), post));
         postRepository.save(post);
     }
+
+    @Override
+    public void enablePost(Long postId){
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (postOptional.isPresent()){
+            Post post = postOptional.get();
+            post.getHistory().add(new History(LocalDateTime.now(), HistoryStatus.ENABLED.name(), post));
+            postRepository.save(post);
+        }
+    }
 }
