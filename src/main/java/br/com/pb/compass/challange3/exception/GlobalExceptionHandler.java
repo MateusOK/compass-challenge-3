@@ -53,6 +53,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseBody);
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ExceptionResponseBody> handleResourceNotFoundException(IllegalStateException ex){
+        ExceptionResponseBody responseBody = new ExceptionResponseBody();
+        responseBody.setStatus(HttpStatus.BAD_REQUEST.value());
+        responseBody.setMessage(ex.getMessage());
+        responseBody.setTimeStamp(new Date());
+        responseBody.setPath(request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponseBody> handleGenericException(Exception ex){
         ExceptionResponseBody responseBody = new ExceptionResponseBody();
