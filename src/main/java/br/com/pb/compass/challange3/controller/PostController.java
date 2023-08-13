@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,5 +39,11 @@ public class PostController {
     public ResponseEntity<Void> disablePost(@PathVariable Long postId){
         jmsTemplate.convertAndSend("disabled.queue", postId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{postId}")
+    public ResponseEntity<Void> updatePost(@PathVariable Long postId){
+        postService.updatePost(postId);
+        return ResponseEntity.accepted().build();
     }
 }
