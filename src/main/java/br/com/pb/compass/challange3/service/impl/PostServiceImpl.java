@@ -7,6 +7,7 @@ import br.com.pb.compass.challange3.repository.PostRepository;
 import br.com.pb.compass.challange3.service.PostService;
 import br.com.pb.compass.challange3.utils.HistoryStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ import java.util.Optional;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final JmsTemplate jmsTemplate;
 
     @Override
     public void createPost(Long postId) {
@@ -81,5 +83,29 @@ public class PostServiceImpl implements PostService {
         } else {
             throw new RuntimeException("Post not found.");
         }
+    }
+
+    @Override
+    public void updatePost(Long postId) {
+        Optional<Post> postOptional = postRepository.findById(postId);
+
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+
+            if (isPostInEnabledOrDisabledState(post)) {
+                post.getHistory().add(new History(LocalDateTime.now(), HistoryStatus.UPDATING.name(), post));
+
+                postRepository.save(post);
+                jmsTemplate.convertAndSend("post.find.queue", postId);
+            }
+        }
+    }
+
+    private boolean isPostInEnabledOrDisabledState(Post post) {
+        if (post != null && post.getHistory() != null && !post.getHistory().isEmpty()) {
+            String latestStatus = post.getHistory().get(post.getHistory().size() - 1).getStatus();
+            return latestStatus.equals(HistoryStatus.ENABLED.name()) || latestStatus.equals(HistoryStatus.DISABLED.name());
+        }
+        return false;
     }
 }
