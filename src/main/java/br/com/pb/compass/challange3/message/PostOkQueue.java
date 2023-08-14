@@ -3,6 +3,7 @@ package br.com.pb.compass.challange3.message;
 
 import br.com.pb.compass.challange3.entity.History;
 import br.com.pb.compass.challange3.entity.Post;
+import br.com.pb.compass.challange3.exception.ResourceNotFoundException;
 import br.com.pb.compass.challange3.repository.PostRepository;
 import br.com.pb.compass.challange3.service.ExternalApi;
 import br.com.pb.compass.challange3.utils.HistoryStatus;
@@ -25,7 +26,7 @@ public class PostOkQueue {
     public void processOkPost(Long postId) {
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found " + postId));
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found " + postId));
         Mono<Post> postMono = externalApi.fetchPostById(postId);
 
         postMono.subscribe(
