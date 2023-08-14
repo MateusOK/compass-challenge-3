@@ -10,6 +10,11 @@ spring:
     password:
     driverClassName: org.h2.Driver
 
+  jpa:
+    hibernate.ddl-auto: create-drop
+    hibernate.format.sql: true
+    show-sql: true
+
   artemis:
     mode: embedded
     embedded:
