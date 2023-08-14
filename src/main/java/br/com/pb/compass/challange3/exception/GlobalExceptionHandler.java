@@ -73,4 +73,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         responseBody.setPath(request.getRequestURI());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
     }
+
+    @ExceptionHandler(PostAlreadyExistsException.class)
+    public ResponseEntity<ExceptionResponseBody> handlePostAlreadyExistsException(PostAlreadyExistsException ex) {
+        ExceptionResponseBody responseBody = new ExceptionResponseBody();
+        responseBody.setStatus(HttpStatus.BAD_REQUEST.value());
+        responseBody.setMessage(ex.getMessage());
+        responseBody.setTimeStamp(new Date());
+        responseBody.setPath(request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
+    }
+
 }

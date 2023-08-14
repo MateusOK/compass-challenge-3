@@ -3,6 +3,7 @@ package br.com.pb.compass.challange3.service.impl;
 import br.com.pb.compass.challange3.dto.PostResponseDto;
 import br.com.pb.compass.challange3.entity.History;
 import br.com.pb.compass.challange3.entity.Post;
+import br.com.pb.compass.challange3.exception.PostAlreadyExistsException;
 import br.com.pb.compass.challange3.exception.ResourceNotFoundException;
 import br.com.pb.compass.challange3.repository.PostRepository;
 import br.com.pb.compass.challange3.service.PostService;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void createPost(Long postId) {
+        if (isPostAlreadyExists(postId)){
+            throw new PostAlreadyExistsException("Post with id " + postId + " already exists");
+        }
         Post post = new Post();
         post.setId(postId);
         post.getHistory().add(new History(LocalDateTime.now(), HistoryStatus.CREATED.name(), post));
@@ -96,5 +101,10 @@ public class PostServiceImpl implements PostService {
             return latestStatus.equals(HistoryStatus.ENABLED.name()) || latestStatus.equals(HistoryStatus.DISABLED.name());
         }
         return false;
+    }
+
+    private boolean isPostAlreadyExists(Long postId){
+        Optional<Post> post = postRepository.findById(postId);
+        return post.isPresent();
     }
 }
